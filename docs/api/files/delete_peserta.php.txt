@@ -1,0 +1,14 @@
+<?php 
+include_once 'connection.php';
+
+$id = isset($_GET['id'])?$_GET['id']:'';
+
+$delete = $conn->prepare("DELETE FROM peserta WHERE id_peserta = ?");
+$delete->bind_param('s', $id);
+if ($delete->execute()) {
+	header('location: http://localhost/jwp_crud/index.php?message=Data Peserta Berhasil di Delete');
+}else{
+	header('location: http://localhost/jwp_crud/index.php?message=Data Peserta Gagal dihapus');
+}
+
+ ?>

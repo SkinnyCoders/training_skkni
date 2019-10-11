@@ -1,0 +1,84 @@
+<?php 
+include_once 'connection.php';
+include_once 'nilai.php';
+
+$sqlGet = mysqli_query($conn, "SELECT GROUP_CONCAT(hobi.hobi) AS hobi, peserta.*, nilai.* FROM peserta INNER JOIN hobi ON hobi.id_peserta=peserta.id_peserta INNER JOIN nilai ON nilai.id_peserta=peserta.id_peserta WHERE 1 GROUP BY peserta.nama ORDER BY peserta.nama ASC");
+if (mysqli_num_rows($sqlGet) > 0) {
+	while ($dataPeserta = mysqli_fetch_assoc($sqlGet)) {
+		$data[] = $dataPeserta;
+	}
+}
+
+ ?>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Data Peserta</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body style="background-color: #333">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card mt-5">
+					<div style="background-color: #eee" class="card-header">
+						<div class="header">
+							<div class="row">
+								<div class="col-md-8">
+									<h3>Data peserta</h3>
+									
+								</div>
+								<div class="col-md-4">
+									<a class="btn btn-primary float-right" href="http://localhost/jwp_crud/tambah_peserta.php">Tambah Peserta</a>
+								</div>
+							</div>
+							<?php if (isset($_GET['message'])) : ?>
+										<div class="alert alert-danger mt-2" role="alert">
+					  						<?=$_GET['message']?>
+										</div>
+									<?php endif ?>
+						</div>
+					</div>
+					<div class="card-body">
+						<table class="table table-striped">
+							<tr>
+								<th>No</th>
+								<th>Nama</th>
+								<th>Gender</th>
+								<th>Hobi</th>
+								<th>Alamat</th>
+								<th>No HP</th>
+								<th>Email</th>
+								<th>Status</th>
+								<th>Aksi</th>
+							</tr>
+							<?php
+							$no =1; 
+							foreach ($data as $p) {
+								$hobi = explode(',', $p['hobi']);
+							 ?>
+							<tr>
+								<td><?=$no++?></td>
+								<td><?=$p['nama']?></td>
+								<td><?=$p['gender']?></td>
+								<td><?php foreach($hobi AS $h){
+									echo '*'.$h.'</br>';
+								}?></td>
+								<td><?=$p['alamat']?></td>
+								<td><?=$p['no_hp']?></td>
+								<td><?=$p['email']?></td>
+								<td><b><i><?=nilai($p['nilai'])?></i></b></td>
+								<td><a class="btn btn-info" href="http://localhost/jwp_crud/edit_peserta.php?id=<?=$p['id_peserta']?>">Edit</a> <a class="btn btn-info" href="http://localhost/jwp_crud/form_nilai.php?id=<?=$p['id_peserta']?>">Nilai</a> <a class="btn btn-danger" href="http://localhost/jwp_crud/delete_peserta.php?id=<?=$p['id_peserta']?>">Hapus</a></td>
+							</tr>
+							<?php
+							}
+							 ?>
+						</table>
+					</div>
+				</div>
+			</div>		
+		</div>
+	</div>
+
+</body>
+</html>

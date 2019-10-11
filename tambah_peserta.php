@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tambah Peserta</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Abril+Fatface&display=swap" rel="stylesheet">
+</head>
+<body style="background-color: #333">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				<div class="card mt-5">
+					<div style="background-color: #eee" class="card-header">
+						<h3 style="font-family:'Abril Fatface', cursive;" class="text-heading">Tambah Peserta</h3>
+						<?php if (isset($_GET['message'])) : ?>
+							<div class="alert alert-danger mt-2" role="alert">
+		  						<?=$_GET['message']?>
+							</div>
+						<?php endif ?>
+					</div>
+					<div class="card-body">
+						<form method="POST">
+							<div class="form-group">
+								<input type="text" name="nama" class="form-control" placeholder="Masukan Nama">
+							</div>
+							<div class="form-group">
+								<label class="label text-muted">Jenis Kelamin</label>
+								<div class="form-check">
+								  <input class="form-check-input" type="radio" name="gender" id="male" value="Male" checked>
+								  <label class="form-check-label" for="male">
+								    Laki - Laki
+								  </label>
+								</div>
+								<div class="form-check">
+								  <input class="form-check-input" type="radio" name="gender" id="female" value="Female">
+								  <label class="form-check-label" for="female">
+								    Perempuan
+								  </label>
+								</div>
+							</div>
+							<div class="form-group">
+								<textarea class="form-control" name="alamat" placeholder="Masukan Alamat"></textarea>
+							</div>
+							<div class="form-group">
+								<input type="number" class="form-control" name="no_hp" placeholder="Masukan No HP">	
+							</div>
+							<div class="form-group">
+								<input type="email" class="form-control" name="email" placeholder="Masukan Email">	
+							</div>
+							<div class="form-group">
+								<label class="label text-muted">Hobi</label>
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" name="hobi[]" id="baca" value="membaca">
+								  <label class="form-check-label" for="baca">
+								    Membaca
+								  </label>
+								</div>
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" name="hobi[]" id="nonton" value="menonton">
+								  <label class="form-check-label" for="nonton">
+								    Menonton
+								  </label>
+								</div>
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" name="hobi[]" id="nulis" value="menulis">
+								  <label class="form-check-label" for="nulis">
+								    Menulis
+								  </label>
+								</div>
+							</div>
+
+
+							<div class="form-group">
+								<input type="submit" class="btn btn-primary float-right" name="simpan" value="Simpan">	
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+
+<?php 
+include_once 'connection.php';
+require 'fungsi_db.php';
+
+if (isset($_POST['simpan'])) {
+	$nama 	= htmlspecialchars(strtolower(trim($_POST['nama'])));
+	$gender = $_POST['gender'];
+	$alamat = htmlspecialchars(strtolower($_POST['alamat']));
+	$no_hp 	= htmlspecialchars($_POST['no_hp']);
+	$email 	= strtolower(trim($_POST['email']));
+	$hobi 	= $_POST['hobi'];
+
+	$tambah = new fungsi_db();
+	$tambah->add_data($nama, $gender, $alamat, $no_hp, $email, $hobi);
+
+	if ($tambah == true) {
+		header('location: index.php');
+	}else{
+		header('location: index.php');
+	}
+	
+}
+
+ ?>

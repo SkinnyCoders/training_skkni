@@ -1,0 +1,87 @@
+<?php 
+
+include_once 'connection.php';
+
+$id_peserta = isset($_GET['id'])?$_GET['id']:'';
+
+$sql = mysqli_query($conn, "SELECT nama FROM peserta WHERE id_peserta= $id_peserta");
+if (mysqli_num_rows($sql) > 0) {
+	$data = mysqli_fetch_assoc($sql);
+}
+ ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tambah Peserta</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Abril+Fatface&display=swap" rel="stylesheet">
+</head>
+<body style="background-color: #333">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				<div class="card mt-5">
+					<div style="background-color: #eee" class="card-header">
+						<h3 style="font-family:'Abril Fatface', cursive;" class="text-heading">Input Nilai Peserta</h3>
+						<?php if (isset($_GET['message'])) : ?>
+							<div class="alert alert-danger mt-2" role="alert">
+		  						<?=$_GET['message']?>
+							</div>
+						<?php endif ?>
+					</div>
+					<div class="card-body">
+						<form method="POST">
+							<div class="form-group">
+								<input type="text" name="nama" class="form-control" value="<?=ucwords($data['nama'])?>" placeholder="Nama" readonly>
+							</div>
+							<div class="form-group">
+								<input type="number" name="nilai" class="form-control" placeholder="Masukan Nilai">
+							</div>
+
+							<div class="form-group">
+								<input type="submit" class="btn btn-primary float-right" name="simpan" value="Simpan">	
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+<?php 
+include_once 'connection.php';
+
+if (@$_POST) {
+	$id_peserta = $_GET['id'];
+	$nilai = @$_POST['nilai'];
+
+	//cek peserta
+	$cekNilai = mysqli_query($conn, "SELECT nilai FROM nilai WHERE id_peserta= $id_peserta");
+	if (mysqli_num_rows($cekNilai) > 0) {
+		$update_nilai = $conn->prepare("UPDATE `nilai` SET `nilai`=? WHERE `id_peserta`=?");
+		$update_nilai->bind_param('ss', $nilai, $id_peserta);
+		if ($update_nilai->execute()) {
+			$update_nilai->close();
+			header('location: http://localhost/jwp_crud/index.php');
+		}else{
+			$update_nilai->close();
+			header('location: http://localhost/jwp_crud/index.php');
+		}
+	}else{
+		$insertNilai = $conn->prepare("INSERT INTO nilai (`id_peserta`, `nilai`) VALUES (?,?)");
+		$insertNilai->bind_param('ss', $id_peserta, $nilai);
+		if ($insertNilai->execute()) {
+			header('location: http://localhost/jwp_crud/index.php');
+		}else{
+			header('location: http://localhost/jwp_crud/index.php');
+		}
+	}
+}
+
+
+
+ ?>
